@@ -1,0 +1,31 @@
+name: Build WinForms
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v2
+
+      - name: Restore packages
+        run: nuget restore Quanlybanoto.csproj -PackagesDirectory packages
+
+      - name: Build
+        run: msbuild Quanlybanoto.csproj /p:Configuration=Release
+
+      - name: Upload exe
+        uses: actions/upload-artifact@v4
+        with:
+          name: Quanlybanoto-Release
+          path: bin/Release/
